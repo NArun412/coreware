@@ -3340,30 +3340,30 @@ class Database {
 			syslog(LOG_ERR, $thisErrorText . ": " . $query);
 		}
 
-		$emailText .= "</body></html>";
-		$emailAddresses = array();
-		$bccEmailAddresses = array();
-		$emailAdded = false;
-		foreach ($sendToAddresses as $emailAddress) {
-			if (empty($emailAddress)) {
-				continue;
-			}
-			if ($emailAdded) {
-				$bccEmailAddresses[] = $emailAddress;
-			} else {
-				$emailAddresses[] = $emailAddress;
-			}
-			$emailAdded = true;
-		}
-		if ($emailAdded) {
-			$errorMessage = sendEmail(array("subject" => "Error log entry created", "body" => $emailText, "email_addresses" => $emailAddresses, "bcc_addresses" => $bccEmailAddresses, "primary_client" => true, "no_notifications" => true, "no_copy" => true));
-			if ($errorMessage !== true) {
-				$userId = (empty($GLOBALS['gUserId']) ? "NULL" : $GLOBALS['gUserId']);
-				$query = "insert into error_log (user_id,script_filename,error_message,query_text,content) values " .
-					"(" . $userId . "," . $this->makeParameter($GLOBALS['gLinkUrl']) . "," . $this->makeParameter($errorMessage) . ",null," . (empty($additionalContent) ? "NULL" : $this->makeParameter($additionalContent)) . ")";
-				$this->iDBConnection->query($query);
-			}
-		}
+		// $emailText .= "</body></html>";
+		// $emailAddresses = array();
+		// $bccEmailAddresses = array();
+		// $emailAdded = false;
+		// foreach ($sendToAddresses as $emailAddress) {
+		// 	if (empty($emailAddress)) {
+		// 		continue;
+		// 	}
+		// 	if ($emailAdded) {
+		// 		$bccEmailAddresses[] = $emailAddress;
+		// 	} else {
+		// 		$emailAddresses[] = $emailAddress;
+		// 	}
+		// 	$emailAdded = true;
+		// }
+		// if ($emailAdded) {
+		// 	$errorMessage = sendEmail(array("subject" => "Error log entry created", "body" => $emailText, "email_addresses" => $emailAddresses, "bcc_addresses" => $bccEmailAddresses, "primary_client" => true, "no_notifications" => true, "no_copy" => true));
+		// 	if ($errorMessage !== true) {
+		// 		$userId = (empty($GLOBALS['gUserId']) ? "NULL" : $GLOBALS['gUserId']);
+		// 		$query = "insert into error_log (user_id,script_filename,error_message,query_text,content) values " .
+		// 			"(" . $userId . "," . $this->makeParameter($GLOBALS['gLinkUrl']) . "," . $this->makeParameter($errorMessage) . ",null," . (empty($additionalContent) ? "NULL" : $this->makeParameter($additionalContent)) . ")";
+		// 		$this->iDBConnection->query($query);
+		// 	}
+		// }
 	}
 
 	/**
