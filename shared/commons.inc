@@ -2255,7 +2255,7 @@ function autoVersion($file) {
 	while (strlen($mtime) < 10) {
 		$mtime = "0" . $mtime;
 	}
-	$filename = preg_replace('{\\.([^./]+)$}', "." . $mtime . ".\$1", $file);
+	$filename = preg_replace('{\\.([^./]+)$}', ".\$1", $file);
 	return $GLOBALS['gCdnDomainName'] . $filename;
 }
 
