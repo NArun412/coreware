@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(E_ERROR | E_PARSE);
 /*	This software is the unpublished, confidential, proprietary, intellectual
 	property of Kim David Software, LLC and may not be copied, duplicated, retransmitted
 	or used in any manner without expressed written consent from Kim David Software, LLC.
@@ -421,9 +421,9 @@ if ($GLOBALS['gUserId'] == 10000) {
 # Check a text file for IP addresses that are not allowed to use the system. First calculate the addresses that would make, as
 # in xxx.xxx.xxx.xxx/xx. This will be used again below.
 
-$GLOBALS['gDatabaseName'] = "corewaredb";
-$GLOBALS['gDatabaseUsername'] = "dbuser";
-$GLOBALS['gDatabasePassword'] = "Mx35d4JLy7hz";
+$GLOBALS['gDatabaseName'] = "gunstoresdb";
+$GLOBALS['gDatabaseUsername'] = "root";
+$GLOBALS['gDatabasePassword'] = "";
 $GLOBALS['gDatabaseHostName'] = "";
 $GLOBALS['gDatabaseConnections'] = array();
 
