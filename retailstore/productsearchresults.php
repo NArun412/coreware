@@ -30,6 +30,7 @@ class RetailStoreProductSearchResultsPage extends Page {
 	var $iPageGroupingData = array();
 
 	function initialize() {
+
 		$sourceId = "";
 		if (array_key_exists("aid", $_GET)) {
 			$sourceId = getReadFieldFromId("source_id", "sources", "source_code", strtoupper($_GET['aid']));
@@ -96,6 +97,7 @@ class RetailStoreProductSearchResultsPage extends Page {
 			$dataTable = new DataTable($tableName);
 			$primaryKey = $dataTable->getPrimaryKey();
 			$this->iSearchCriteriaTables[$tableName]['primary_key'] = $primaryKey;
+            
 			$valuesArray = array();
 			$excludeValuesArray = array();
 			$fieldsArray = array($primaryKey, $primaryKey . "s");
@@ -138,6 +140,7 @@ class RetailStoreProductSearchResultsPage extends Page {
 					}
 				}
 			}
+          
 			if (!empty($valuesArray) || !empty($excludeValuesArray)) {
 				$this->iSearchCriteria[] = array("table_name" => $tableName, "values_array" => $valuesArray, "exclude_values_array" => $excludeValuesArray);
 				$this->iSearchCriteriaCount += count($valuesArray) + count($excludeValuesArray);
@@ -146,7 +149,8 @@ class RetailStoreProductSearchResultsPage extends Page {
 		if (empty($this->iPageGroupingData) && $this->iSearchCriteriaCount == 1) {
 			foreach ($this->iSearchCriteria as $thisSearchCriteria) {
 				$tableRow = getRowFromId($thisSearchCriteria['table_name'], $this->iSearchCriteriaTables[$thisSearchCriteria['table_name']]['primary_key'], $thisSearchCriteria['values_array'][0]);
-				if ($this->iSearchCriteriaTables[$thisSearchCriteria['table_name']]['contact_image']) {
+				
+                if ($this->iSearchCriteriaTables[$thisSearchCriteria['table_name']]['contact_image']) {
 					$tableRow['image_id'] = getFieldFromId("image_id", "contacts", "contact_id", $tableRow['contact_id']);
 				}
 				if (!empty($tableRow) && !empty($this->iSearchCriteriaTables[$thisSearchCriteria['table_name']]['label'])) {
@@ -526,6 +530,7 @@ class RetailStoreProductSearchResultsPage extends Page {
 					$productCatalog->showOutOfStock(false);
 				}
 				$productResults = $productCatalog->getProducts();
+                // print_r($productResults);die;
 				$endTime = getMilliseconds();
 				$queryTime .= "Get Search Results: " . round(($endTime - $startTime) / 1000, 2) . ", Memory Used: " . number_format(memory_get_usage(), 0, "", ",") . "\n";
 				$startTime = getMilliseconds();
@@ -975,15 +980,15 @@ class RetailStoreProductSearchResultsPage extends Page {
                     }, 2000);
                 }
 				<?php } else { ?>
-                if (resultCount <= 0) {
-                    $("#_search_results").append("<h2 class='align-center'>No Results Found</h2>");
+                if (resultCount <= 0) { 
+                    $("#_search_results").append("<h2 class='align-center'>No Results Found MAHATHI INFOTECH RESULTS</h2>");
                 }
 				<?php } ?>
             }
 
             $(function () {
                 setTimeout(function () {
-                    if (empty(productSearchResultsKey)) {
+                    if (productSearchResultsKey !=undefined && empty(productSearchResultsKey)) {
                         initialProductLoad();
                     } else {
                         $("body").addClass("no-waiting-for-ajax");

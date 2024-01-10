@@ -1101,7 +1101,7 @@ function displaySearchResults(catalogItemContainer, keepPageNumber, afterFunctio
         insertWrapper = true;
     }
     if (resultCount === 0) {
-        $("#" + catalogItemContainer).html("<p>No Results Found</p>");
+        $("#" + catalogItemContainer).html("<p>No Results Found MAHATHI ONE!</p>");
         if (typeof afterDisplaySearchResults == "function") {
             // noinspection JSUnresolvedFunction
             afterDisplaySearchResults(catalogItemWrapper);

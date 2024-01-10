@@ -805,7 +805,7 @@ class ProductCatalog {
 		if (empty($callForPriceText)) {
 			$callForPriceText = getLanguageText("Call for Price");
 		}
-
+		
 		if ($listType == "list" && !$forceTile) {
 			$catalogResultTemplate = getFragment("RETAIL_STORE_CATALOG_LIST_RESULT");
 			if (empty($catalogResultTemplate)) {
@@ -901,6 +901,7 @@ class ProductCatalog {
 		}
 		$catalogResultTemplate = str_replace("%call_for_price_text%", $callForPriceText, $catalogResultTemplate);
 		$catalogResultTemplate = str_replace("%add_to_cart_text%", $addToCartText, $catalogResultTemplate);
+		// mahathi come 1
 		return $catalogResultTemplate;
 	}
 
@@ -1329,7 +1330,6 @@ class ProductCatalog {
 		if ($indexOnly) {
 			return $locationAvailabilityIndex;
 		}
-
 		return str_replace("%default_location_description%", $defaultLocationDescription, str_replace("%location_list%", $locationList, $locationAvailabilityTexts[$locationAvailabilityIndex]));
 	}
 
@@ -1763,6 +1763,7 @@ class ProductCatalog {
 			}
 			$searchWords[] = $thisPart;
 		}
+		// mahathi come 2
 		return array("display_search_text" => $displaySearchText, "search_words" => $searchWords);
 	}
 
@@ -1781,6 +1782,7 @@ class ProductCatalog {
 			$row['product_manufacturer_ids'] = array_filter(explode(",", $row['product_manufacturer_ids']));
 			$GLOBALS['gSearchTermSynonyms'][strtoupper($row['redirected_search_term'])] = $row;
 		}
+		// mahathi come 3
 	}
 
 	public static function importProductFromUPC($upcCode, $parameters = array()) {
@@ -2128,6 +2130,7 @@ class ProductCatalog {
 	}
 
 	function getProductSalePrice($productId, $parameters = array()) {
+		// print_r($parameters);die;
 		if (!array_key_exists("quantity", $parameters)) {
 			$parameters['quantity'] = 1;
 		}
@@ -2149,21 +2152,25 @@ class ProductCatalog {
 		if (!empty($parameters['user_type_id']) && getPreference("IGNORE_MAP_FOR_USER_TYPES")) {
 			$parameters['ignore_map'] = true;
 		}
-
+		// print_r($GLOBALS['gPriceCalculationTypes']);die;
 		if (empty($GLOBALS['gPriceCalculationTypes'])) {
 			$resultSet = executeQuery("select * from price_calculation_types");
 			$GLOBALS['gPriceCalculationTypes'] = array();
+			// print_r($resultSet);die;
 			while ($row = getNextRow($resultSet)) {
+				// echo $row['price_calculation_type_code'];
 				$GLOBALS['gPriceCalculationTypes'][$row['price_calculation_type_id']] = $row['price_calculation_type_code'];
 			}
+			//print_r($GLOBALS['gPriceCalculationTypes']);die;
 		}
-
+		// print_r($this->iPricingStructureContactTypes);die;
 		# get and store user and contact types. Only ignore pricing cache if the user's type or contact type is actually used
-		if ($this->iPricingStructureContactTypes === false) {
-			$this->iPricingStructureContactTypes = getCachedData("pricing_structure_data", "contact_types");
+		if ($this->iPricingStructureContactTypes === false) {		
+			$this->iPricingStructureContactTypes = getCachedData("pricing_structure_data", "contact_types");			
 			if (!is_array($this->iPricingStructureContactTypes)) {
 				$this->iPricingStructureContactTypes = array();
-				$resultSet = executeReadQuery("select contact_type_id from pricing_structure_quantity_discounts where contact_type_id is not null union select contact_type_id from pricing_structure_user_discounts where contact_type_id is not null");
+				$resultSet = executeReadQuery("select contact_type_id from pricing_structure_quantity_discounts where contact_type_id is not null union select contact_type_id from pricing_structure_user_discounts where contact_type_id is not null");				
+				// print_r($resultSet);die;
 				while ($row = getNextRow($resultSet)) {
 					$this->iPricingStructureContactTypes[$row['contact_type_id']] = $row['contact_type_id'];
 				}
@@ -2171,7 +2178,7 @@ class ProductCatalog {
 			}
 		}
 		if ($this->iPricingStructureUserTypes === false) {
-			$this->iPricingStructureUserTypes = getCachedData("pricing_structure_data", "user_types");
+			$this->iPricingStructureUserTypes = getCachedData("pricing_structure_data", "user_types");	
 			if (!is_array($this->iPricingStructureUserTypes)) {
 				$this->iPricingStructureUserTypes = array();
 				$resultSet = executeReadQuery("select user_type_id from pricing_structure_quantity_discounts where user_type_id is not null union " .
@@ -2179,6 +2186,7 @@ class ProductCatalog {
 					"select user_type_id from pricing_structures where user_type_id is not null union " .
 					"select user_type_id from user_types where pricing_structure_id is not null union " .
 					"select user_type_id from product_prices where user_type_id is not null");
+					// print_r(getNextRow($resultSet));die;
 				while ($row = getNextRow($resultSet)) {
 					$this->iPricingStructureUserTypes[$row['user_type_id']] = $row['user_type_id'];
 				}
@@ -2220,6 +2228,7 @@ class ProductCatalog {
 			}
 		}
 		$useStoredPrices = false;
+		// print_r($parameters);die;
 		if (empty($_GET['no_stored_prices']) && empty($parameters['no_stored_prices']) && empty($parameters['shopping_cart_id']) && $parameters['quantity'] == 1 &&
 			!$parameters['ignore_map'] && !$parameters['return_pricing_structure_only'] && empty($pricingUserTypeId) && empty($pricingContactTypeId)) {
 			$ignoreStoredPrices = getPreference("IGNORE_STORED_PRICES");
@@ -2273,6 +2282,7 @@ class ProductCatalog {
 					return $this->iNoCacheStoredPrices[$productId];
 				}
 			}
+			// mahathi come 4
 		}
 
 		if (!is_array($parameters['product_information']) || empty($parameters['product_information'])) {
@@ -2378,7 +2388,7 @@ class ProductCatalog {
 		}
 
 		$salePriceProductPrices = ($parameters['no_cache'] ? false : getCachedData("product_prices", $productId));
-		if ($salePriceProductPrices === false) {
+		if ($salePriceProductPrices === false) {	
 			$salePriceProductPrices = array();
 			$salePriceProductPriceTypeId = getCachedData("product_price_type_id", "SALE_PRICE");
 			if (empty($salePriceProductPriceTypeId)) {
@@ -2711,7 +2721,6 @@ class ProductCatalog {
 			}
 			$pricingStructureId = $this->iDefaultPricingStructureId;
 		}
-
 		if ($parameters['return_pricing_structure_only']) {
 			return $pricingStructureId;
 		}
@@ -3214,7 +3223,6 @@ class ProductCatalog {
 				freeResult($resultSet);
 			}
 		}
-
 		if (self::$iNonInventoryProducts === false) {
 			self::$iNonInventoryProducts = array();
 			$resultSet = executeReadQuery("select product_id from products where non_inventory_item = 1 and client_id = ?", $GLOBALS['gClientId']);
@@ -4152,9 +4160,9 @@ class ProductCatalog {
 		}
 
 		if (!empty($this->iCompliantStates)) {
-			$parameters = array_merge(array($GLOBALS['gClientId']), $this->iCompliantStates);
+			$parameters = array_merge(array($GLOBALS['gClientId']), $this->iCompliantStates);			 
 			$resultSet = executeQuery("select product_department_id from product_department_restrictions where product_department_id in (select product_department_id from product_departments where client_id = ?) and " .
-				"state in (" . implode(",", array_fill(0, count($this->iCompliantStates), "?")) . ")", $parameters);
+				"state in (" . implode(",", array_fill(0, count($this->iCompliantStates), "?")) . ")", $parameters);		
 			while ($row = getNextRow($resultSet)) {
 				$this->iExcludeDepartments[] = $row['product_department_id'];
 			}
@@ -4277,7 +4285,7 @@ class ProductCatalog {
 				$parameters[] = $GLOBALS['gClientId'];
 			}
 		}
-		$whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.inactive = 0 and products.custom_product = 0 and products.not_searchable = 0";
+		$whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.inactive = 0  and products.not_searchable = 0";
 		if (!$GLOBALS['gInternalConnection'] && !$this->iAllowInternalUseOnly) {
 			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.internal_use_only = 0";
 		}
@@ -4319,7 +4327,7 @@ class ProductCatalog {
 			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.image_id is not null";
 		}
 		if ($this->iIgnoreProductsWithoutCategory) {
-			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "exists (select product_id from product_category_links where product_id = products.product_id)";
+			// $whereStatement .= (empty($whereStatement) ? "" : " and ") . "exists (select product_id from product_category_links where product_id = products.product_id)";
 		}
 		if (!empty($this->iProductTypeIds)) {
 			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "product_type_id in (" . implode(",", $this->iProductTypeIds) . ")";
@@ -4336,7 +4344,7 @@ class ProductCatalog {
 			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "(product_type_id is null or product_type_id <> " . $orderUpsellProductTypeId . ")";
 		}
 		if (!empty($this->iCategoryIds)) {
-			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "exists (select product_id from product_category_links where product_id = products.product_id and product_category_id in (" . implode(",", $this->iCategoryIds) . "))";
+			// $whereStatement .= (empty($whereStatement) ? "" : " and ") . "exists (select product_id from product_category_links where product_id = products.product_id and product_category_id in (" . implode(",", $this->iCategoryIds) . "))";
 		}
 		if (!empty($this->iManufacturerIds)) {
 			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "product_manufacturer_id in (" . implode(",", $this->iManufacturerIds) . ")";
@@ -4442,7 +4450,7 @@ class ProductCatalog {
 			}
 		}
 		if (!empty(getPreference("EXCLUDE_BASE_COST_ZERO"))) {
-			$whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.base_cost > 0";
+			// $whereStatement .= (empty($whereStatement) ? "" : " and ") . "products.base_cost > 0";
 		}
 		if (!empty($this->iSpecificProductIds)) {
 			$productIdList = "";
@@ -4502,6 +4510,9 @@ class ProductCatalog {
 			$query .= " limit " . $this->iSelectLimit;
 		}
 		$this->iQuery = $query;
+		// product getting here 
+		// echo $this->iQuery;
+		// die;
 		foreach ($parameters as $fieldName => $fieldValue) {
 			$this->iQuery .= ", " . $fieldName . " = " . $fieldValue;
 		}
@@ -4512,11 +4523,16 @@ class ProductCatalog {
 
 		$urlAliasTypeCode = getUrlAliasTypeCode("products", "product_id", "id");
 
+// query printed here 
+		// echo $query;
+		// die;
 		$resultSet = executeReadQuery($query, $parameters);
-
+// print_r( $resultSet);
+// die;
 		$productArray = array();
 		$resultCount = 0;
 		$this->iResultCount = $resultSet['row_count'];
+		
 		$endTime = getMilliseconds();
 		$this->iQueryTime .= "query run: " . round(($endTime - $startTime) / 1000, 2) . "\n";
 		if ($this->iReturnCountOnly) {
@@ -4533,7 +4549,6 @@ class ProductCatalog {
 				"virtual_product", "cart_minimum", "cart_maximum", "order_maximum", "date_created", "user_group_id", "product_group_options", "reindex",
 				"error_message", "custom_product", "not_taxable", "serializable", "internal_use_only", "inactive", "notes", "version", "product_data_id");
 		}
-
 		if ($resultSet['row_count'] > $this->iTemporaryTableThreshold) {
 			$this->iTemporaryTableName = "temporary_products_" . date("Ymd") . "_" . strtolower(getRandomString(12));
 			executeQuery("create table " . $this->iTemporaryTableName . "(product_id int not null,primary key (product_id))");
@@ -4627,13 +4642,14 @@ class ProductCatalog {
 			if (is_array($this->iIgnoreMapProducts) && array_key_exists($row['product_id'], $this->iIgnoreMapProducts)) {
 				$row['manufacturer_advertised_price'] = "";
 			}
-
+// print_r($unsetFields);die;
 			foreach ($unsetFields as $thisField) {
 				$row[$thisField] = null;
 				unset($row[$thisField]);
 			}
 
 			$resultCount++;
+			// print_r( $row);die;
 			$this->iProductIds[] = $row['product_id'];
 			if (!empty($this->iTemporaryTableName)) {
 				$temporaryIndexQuery .= (empty($temporaryIndexQuery) ? "" : ",") . "(" . $row['product_id'] . ")";
@@ -4665,12 +4681,13 @@ class ProductCatalog {
 				$imageIdArray[] = $row['image_id'];
 			}
 		}
+		// print_r($imageIdArray);die;
 		freeReadResult($resultSet);
 
 		if (!empty($temporaryIndexQuery)) {
 			executeQuery("insert ignore into " . $this->iTemporaryTableName . " (product_id) values " . $temporaryIndexQuery);
 		}
-
+		// print_r($this->iProductIds);die;
 		$GLOBALS['gProductSearchResultsCount'] = $resultCount;
 		$GLOBALS['gProductSearchResultsProductIds'] = $this->iProductIds;
 		if (!empty($this->iTemporaryTableName)) {
@@ -4702,6 +4719,7 @@ class ProductCatalog {
 			}
 			freeReadResult($resultSet);
 		}
+		// print_r($this->iReturnIdsOnly);die;
 		if (!$this->iReturnIdsOnly) {
 			foreach ($productArray as $index => $productResult) {
 				$row = $productResult->getProductRow();
@@ -4751,6 +4769,8 @@ class ProductCatalog {
 				}
 				$productArray[$index] = $productResult;
 			}
+			// product data 
+			
 		}
 		$endTime = getMilliseconds();
 		$this->iQueryTime .= "product images: " . round(($endTime - $startTime) / 1000, 2) . "\n";
@@ -4787,9 +4807,10 @@ class ProductCatalog {
 			$recalculatedCount = 0;
 			$noPriceCount = 0;
 			$recalculatedProductIds = "";
-
+			// print_r($productArray);die;
 			foreach ($productArray as $index => $productResult) {
 				$row = $productResult->getProductRow();
+				// print_r($row);die;
 				$salePrice = false;
 				if (array_key_exists($row['product_code'], $productSalePrices)) {
 					$salePriceInfo = $productSalePrices[$row['product_code']];
@@ -4798,7 +4819,8 @@ class ProductCatalog {
 					}
 				} else {
 					$salePriceInfo = $this->getProductSalePrice($row['product_id'], array("product_information" => $row,"preload_product_sale_prices"=>true));
-				}
+				}	
+				// print_r($salePriceInfo);die;			
 				$salePrice = $salePriceInfo['sale_price'];
 				$productResult->setValue('map_enforced', $salePriceInfo['map_enforced']);
 				$productResult->setValue('call_price', $salePriceInfo['call_price']);
@@ -4816,8 +4838,8 @@ class ProductCatalog {
 				}
 
 				if (($salePrice === false && $GLOBALS['gHideProductsWithNoPrice']) || ($salePrice == 0 && $GLOBALS['gHideProductsWithZeroPrice'])) {
-					$this->iResultCount--;
-					unset($productArray[$index]);
+					//$this->iResultCount--;
+					//unset($productArray[$index]);
 					continue;
 				}
 				$displayedPrice = $salePrice;
@@ -4881,6 +4903,8 @@ class ProductCatalog {
 			}
 		}
 
+		
+
 		$endTime = getMilliseconds();
 		$this->iQueryTime .= "get other price types: " . round(($endTime - $startTime) / 1000, 2) . "\n";
 		$totalTime += ($endTime - $startTime);
@@ -4910,6 +4934,7 @@ class ProductCatalog {
 			$productArray = $returnArray;
 			unset($returnArray);
 		}
+		
 
 		return ($this->iReturnCountOnly ? count($productArray) : $productArray);
 	}
